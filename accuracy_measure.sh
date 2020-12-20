@@ -4,8 +4,10 @@ if [ $# -ne 4 ]; then
    exit 0
 fi
 
-correct=0
-count=0
+mm=0
+mk=0
+km=0
+kk=0
 
 for file in ./$4/*.wav;
 do  
@@ -15,7 +17,23 @@ do
     echo $output
     gender=${file:12:1}
     if [ "$output" == "$gender" ]; then
-        ((correct++))
+        if [ "$gender" == "K" ]; then
+            ((kk++))
+        else
+            ((mm++))
+        fi
+    else
+        if [ "$gender" == "K" ]; then
+            ((mk++))
+        else
+            ((km++))
+        fi
     fi
 done
-echo "scale=2; $correct / $count" | bc
+
+echo -e "Done\n\nConfusion matrix:"
+echo "    M    K"
+echo "M   $mm   $mk"
+echo "K   $km   $kk"
+echo -e "\nAccuracy: \c"
+echo "scale=2; ($mm + $kk) / ($mm + $mk + $km + $kk)" | bc
